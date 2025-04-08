@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template
+from dbCode import *
 
 app = Flask(__name__)
 
@@ -30,48 +31,6 @@ def numchar(var):
     return result
     
 
-
-import pymysql
-import creds 
-
-def get_conn():
-    conn = pymysql.connect(
-        host= creds.host,
-        user= creds.user, 
-        password = creds.password,
-        db=creds.db,
-        )
-    return conn
-
-def execute_query(query, args=()):
-    cur = get_conn().cursor()
-    cur.execute(query, args)
-    rows = cur.fetchall()
-    cur.close()
-    return rows
-
-
-
-#display the sqlite query in a html table
-def display_html(rows):
-    html = ""
-    html += """<table border="1">
-    <tr>
-        <th>Listing ID</th>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Review Date</th>
-        <th>Comment</th>
-    </tr>"""
-
-    for r in rows:
-        html += f"<tr><td>{r[0]}</td><td>{r[1]}</td><td>${r[2]}</td><td>{r[3]}</td><td>{r[4]}</td></tr>"
-
-    html += "</table>"
-    return html
-
-
-
 @app.route("/viewdb")
 def viewdb():
     rows = execute_query("""SELECT l.id, l.name, l.price, r.review_date, r.comments
@@ -80,26 +39,6 @@ def viewdb():
         LIMIT 10
 """)
     return display_html(rows)
-
-
-def display_price(rows):
-    html = ""
-    html += """<table border="1">
-    <tr>
-        <th>Listing ID</th>
-        <th>Price</th>
-        <th>Neighborhood</th>
-        <th>Room Type</th>
-        <th>Available</th>
-        <th>Minimum Nights</th>
-        <th>Maximum Nights</th>
-    </tr>"""
-
-    for r in rows:
-        html += f"<tr><td>{r[0]}</td><td>${r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td><td>{r[5]}</td><td>{r[6]}</td></tr>"
-
-    html += "</table>"
-    return html
 
 
 @app.route("/pricequery/<price>")
