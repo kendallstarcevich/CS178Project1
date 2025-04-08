@@ -43,24 +43,12 @@ def get_conn():
         )
     return conn
 
-"""def execute_query(query, args=()):
+def execute_query(query, args=()):
     cur = get_conn().cursor()
     cur.execute(query, args)
     rows = cur.fetchall()
     cur.close()
-    return rows"""
-def execute_query(query, args=()):
-    try:
-        conn = get_conn()
-        cur = conn.cursor()
-        cur.execute(query, args)
-        rows = cur.fetchall()
-        cur.close()
-        conn.close()
-        return rows
-    except Exception as e:
-        print("❌ SQL Error:", e)
-        return []
+    return rows
 
 
 
@@ -93,13 +81,38 @@ def viewdb():
 """)
     return display_html(rows)
 
+
+def display_price(rows):
+    html = ""
+    html += """<table border="1">
+    <tr>
+        <th>Listing ID</th>
+        <th>Price</th>
+        <th>Neighborhood</th>
+        <th>Room Type</th>
+        <th>Available</th>
+        <th>Minimum Nights</th>
+        <th>Maximum Nights</th>
+    </tr>"""
+
+    for r in rows:
+        html += f"<tr><td>{r[0]}</td><td>${r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td><td>{r[5]}</td><td>{r[6]}</td></tr>"
+
+    html += "</table>"
+    return html
+
+
 @app.route("/pricequery/<price>")
 def viewprices(price):
-    rows = execute_query("""select ArtistId, Artist.Name, Track.Name, UnitPrice, Milliseconds
-            from Artist JOIN Album using (ArtistID) JOIN Track using (AlbumID)
-            where UnitPrice = %s order by Track.Name 
-            Limit 500""", (str(price)))
-    return display_html(rows) 
+    rows = execute_query("""
+        SELECT DISTINCT c.listing_id, c.price, l.neighbourhood, l.room_type, 
+                        c.available, c.minimum_nights, c.maximum_nights 
+        FROM Listings l
+        JOIN Calendar c ON l.id = c.listing_id
+        WHERE c.price = %s
+        LIMIT 10
+    """, (price,))
+    return display_price(rows)
 
 
 @app.route("/timequery/<time>")
