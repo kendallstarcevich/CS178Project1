@@ -137,18 +137,4 @@ def time_form_post():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
-    
-import pymysql
-import creds
 
-try:
-    conn = pymysql.connect(
-        host=creds.host,
-        user=creds.user,
-        password=creds.password,
-        db=creds.db
-    )
-    print("✅ Connected to RDS MySQL!")
-    conn.close()
-except Exception as e:
-    print("❌ Connection failed:", e)

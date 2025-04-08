@@ -1,5 +1,3 @@
 creds.py
 *.pem
-calendar.csv
-listings.csv
-reviews.csv
+*.csv
