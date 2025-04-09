@@ -74,105 +74,68 @@ def create_user(table):
     )
     print("Your account has been created. Your ID is: ", id)
 
-def print_all_actors(table):
+def update_password(table):
     """
-    display all actors in database
+    prompt user for a username
+    have them change their password
     """
-    print("display all actors")
-    print()
-
-    def print_actors(actor_dict):
-    # print out the values of the actor dictionary
-        print("Name: ", actor_dict["Name"])
-        print(" Age: ", actor_dict["Age"])
-        print(" Movies: ", end="")
-        for movie in actor_dict["Movies"]:
-            print(movie,"|", end=" ")
-        print()
-        print(" Shows: ", end="")
-        for show in actor_dict["Shows"]:
-            print(show,"|", end=" ")
-        
-        print()
-        print()
-
-    response = table.scan() #get all of the actors
-    for actor in response["Items"]:
-        print_actors(actor)
-
-
-def update_projects(table):
-    """
-    prompt user for an actor name
-    promt user for a project (movie or show)
-    update (add) project to the database
-    """
-    print("updating projects")
+    print("updating user")
 
     try: 
-        name=input("What is the actor's name? ")
-        type = str(input("Enter M to add a Movie or S to add a Show: ")).upper()
-        if type == "M":
-            project = input("What is the name of the movie: ")
-            table.update_item(
-                Key = {"Name": name}, 
-                UpdateExpression = "SET Movies = list_append(Movies, :m)", ExpressionAttributeValues = {':m': [project],}
+        username=input("What is your username?: ")
+        new_password = input("What would you like your new password to be?: ")
+        table.update_item(
+                Key = {"Username": username}, 
+                UpdateExpression = "SET Password = :p", ExpressionAttributeValues = {':p': new_password}
             )
-        if type == "S":
-            project = input("What is the name of the show: ")
-            table.update_item(
-                Key = {"Name": name}, 
-                UpdateExpression = "SET Shows = list_append(Shows, :s)", ExpressionAttributeValues = {':s': [project],}
-            )
-        else:
-            print("Invalid input. Try again.")    
-
+        print("Your password has been updated.")
     except Exception:
-        print("Error in updating projects.\n")
+        print("Error in updating password.\n")
 
-def delete_actor(table):
+def delete_user(table):
     """
-    prompt user for an actor name
-    delete item from the database
+    prompt user for a username
+    delete user from the database
     """
-    print("deleting actor")
+    print("deleting user")
 
-    
-    name=input("What is the actor's name? ")
-    table.delete_item(
-    Key={
-        'Name': name
-        }
-    
-)
+    try:
+        username=input("What is the username? ")
+        table.delete_item(
+        Key={
+            'Username': username
+            } 
+    )
+        print("User has been deleted.")
+    except Exception:
+        print("Username not found.\n")
 
-
-def query_actors(table):
+def query_id(table):
     """
-    prompt user for the actor's name
-    print out the age of the actor
+    prompt user for the username
+    print out their id
     """
-    print("query actor")
-    name=input("What is the actor's name? ")
+    print("find id")
+    username=input("What is the users username? ")
     response = table.get_item(
         Key={
-            'Name': name
+            'Username': username
         }
     )
     try:
-        actor = response.get("Item")
-        age = actor["Age"]
-        print("The actor is", age, "years old.")
+        user = response.get("Item")
+        id = user["ID"]
+        print(username,"'s ID is: ",id)
 
     except Exception:
-        print("Actor not found.")
+        print("Username not found.")
 
 
 def print_menu():
     print("----------------------------")
     print("Press C: to CREATE a new user")
     print("Press R: to READ all users")
-    print("Press U: to UPDATE a user")
+    print("Press U: to UPDATE your password")
     print("Press D: to DELETE a user")
     print("Press Q: to QUERY the user's ID")
     print("Press X: to EXIT application")
@@ -196,11 +159,11 @@ def main():
         elif input_char.upper() == "R":
             print_all_users()
         elif input_char.upper() == "U":
-            update_projects(table)
+            update_password(table)
         elif input_char.upper() == "D":
-            delete_actor(table)
+            delete_user(table)
         elif input_char.upper() == "Q":
-            query_actors(table)
+            query_id(table)
         elif input_char.upper() == "X":
             print("exiting...")
         else:
