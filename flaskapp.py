@@ -1,12 +1,14 @@
-from flask import Flask
-from flask import render_template
+from flask import Flask, render_template, request, redirect, url_for, flash
 from dbCode import *
 
+
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
 @app.route('/')
-def hello():
-    return '<h2>Hello from Flask Project 1!</h2>'
+def home():
+    return render_template('home.html')
+
 
 @app.route('/about')
 def about():
@@ -15,21 +17,6 @@ def about():
 @app.route('/hello/<username>/')
 def hello_user(username):
     return render_template('layout.html', name=username)
-
-@app.route('/repeat/<var>')
-def repeater(var):
-    result=""
-    for i in range(10):
-        result += var
-    return result
-
-@app.route("/numchar/<var>")
-def numchar(var):
-    result=""
-    result = len(var)
-    result = str(result)
-    return result
-    
 
 @app.route("/viewdb")
 def viewdb():
@@ -54,18 +41,6 @@ def viewprices(price):
     return display_price(rows)
 
 
-@app.route("/timequery/<time>")
-def viewtime(time):
-    rows = execute_query("""SELECT ArtistId, Artist.Name, Track.Name, UnitPrice, Milliseconds
-                FROM Artist JOIN Album using (ArtistID) JOIN Track using (AlbumID)
-                where Milliseconds > %s order by Track.Name 
-                Limit 500""", (str(time)))
-    return display_html(rows)
-
-
-from flask import request
-
-
 @app.route("/pricequerytextbox", methods = ['GET'])
 def price_form():
   return render_template('textbox.html', fieldname = "Price")
@@ -77,15 +52,23 @@ def price_form_post():
   return viewprices(text)
 
 
-@app.route("/timequerytextbox", methods = ['GET'])
-def time_form():
-  return render_template('textbox.html', fieldname = "Time")
-
-@app.route("/timequerytextbox", methods = ['POST'])
-def time_form_post():
-  text = request.form['text']
-  return viewtime(text)
-
+@app.route('/add-user', methods=['GET', 'POST'])
+def add_user():
+    if request.method == 'POST':
+        # Extract form data
+        name = request.form['name']
+        genre = request.form['genre']
+        
+        # Process the data (e.g., add it to a database)
+        # For now, let's just print it to the console
+        print("Name:", name, ":", "Favorite Genre:", genre)
+        
+        flash('User added successfully!', 'success')  # 'success' is a category; makes a green banner at the top
+        # Redirect to home page or another page upon successful submission
+        return redirect(url_for('home'))
+    else:
+        # Render the form page if the request method is GET
+        return render_template('add_user.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)

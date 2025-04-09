@@ -168,7 +168,9 @@ def main():
             print("exiting...")
         else:
             print('Not a valid option. Try again.')
-main()
+
+#UNCOMMENT THIS IF YOU WANT TO SEE CRUD MENU
+#main()
 
 
 def display_html(rows):
