@@ -74,6 +74,38 @@ def create_user(table):
     )
     print("Your account has been created. Your ID is: ", id)
 
+
+def create_user2(table, name, username, password):
+    """
+    Accept form inputs to create a user from Flask
+    """
+    reviewer_id = generate_unique_reviewer_id()
+    table.put_item(
+        Item={
+            'Username': username,
+            'Password': password,
+            'Name': name,
+            'ID': reviewer_id
+        }
+    )
+    return reviewer_id
+
+def user_login(table, username, password):
+    """
+    Check if the username and password match a user in DynamoDB.
+    Returns the user record if valid, otherwise None.
+    """
+    response = table.get_item(
+        Key={'Username': username}
+    )
+
+    user = response.get('Item')
+    if user and user['Password'] == password:
+        return user  # ✅ Login successful
+    else:
+        return None  # ❌ Login failed
+
+
 def update_password(table):
     """
     prompt user for a username
@@ -199,13 +231,12 @@ def display_price(rows):
         <th>Price</th>
         <th>Neighborhood</th>
         <th>Room Type</th>
-        <th>Available</th>
         <th>Minimum Nights</th>
         <th>Maximum Nights</th>
     </tr>"""
 
     for r in rows:
-        html += f"<tr><td>{r[0]}</td><td>${r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td><td>{r[5]}</td><td>{r[6]}</td></tr>"
+        html += f"<tr><td>{r[0]}</td><td>${r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td><td>{r[5]}</td></tr>"
 
     html += "</table>"
     return html

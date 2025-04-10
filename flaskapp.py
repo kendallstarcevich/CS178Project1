@@ -9,6 +9,40 @@ app.secret_key = 'your_secret_key'
 def home():
     return render_template('home.html')
 
+@app.route('/account')
+def account():
+    return render_template('account.html')
+
+@app.route('/login', methods = ['GET'])
+def login():
+    return render_template('login.html')
+
+@app.route('/login', methods = ['POST'])
+def login_post():
+    username = request.form['username']
+    password = request.form['password']
+
+    if user_login(table, username, password):
+        return redirect(url_for('account'))
+    else:
+        flash('Invalid credentials. Please try again.')
+        return redirect(url_for('login'))
+
+
+@app.route('/signup', methods=['GET'])
+def signup():
+    return render_template('signup.html')
+
+@app.route('/signup', methods=['POST'])
+def signup_post():
+    name = request.form['name']
+    username = request.form['username']
+    password = request.form['password']
+
+    reviewer_id = create_user2(table, name, username, password)
+
+    return f"<h2>✅ Account created! Your Reviewer ID is: {reviewer_id}. You can now <a href='/login'>log in</a>.</h2>"
+
 
 @app.route('/about')
 def about():
@@ -31,12 +65,18 @@ def viewdb():
 @app.route("/pricequery/<price>")
 def viewprices(price):
     rows = execute_query("""
-        SELECT DISTINCT c.listing_id, c.price, l.neighbourhood, l.room_type, 
-                        c.available, c.minimum_nights, c.maximum_nights 
-        FROM Listings l
-        JOIN Calendar c ON l.id = c.listing_id
-        WHERE c.price = %s
-        LIMIT 10
+        SELECT 
+    c.listing_id,
+    c.price,
+    l.neighbourhood,
+    l.room_type,
+    c.minimum_nights,
+    c.maximum_nights
+FROM Listings l
+JOIN Calendar c ON l.id = c.listing_id
+WHERE c.price = %s
+GROUP BY c.listing_id, l.neighbourhood, l.room_type
+LIMIT 10
     """, (price,))
     return display_price(rows)
 
@@ -51,24 +91,6 @@ def price_form_post():
   text = request.form['text']
   return viewprices(text)
 
-
-@app.route('/add-user', methods=['GET', 'POST'])
-def add_user():
-    if request.method == 'POST':
-        # Extract form data
-        name = request.form['name']
-        genre = request.form['genre']
-        
-        # Process the data (e.g., add it to a database)
-        # For now, let's just print it to the console
-        print("Name:", name, ":", "Favorite Genre:", genre)
-        
-        flash('User added successfully!', 'success')  # 'success' is a category; makes a green banner at the top
-        # Redirect to home page or another page upon successful submission
-        return redirect(url_for('home'))
-    else:
-        # Render the form page if the request method is GET
-        return render_template('add_user.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
