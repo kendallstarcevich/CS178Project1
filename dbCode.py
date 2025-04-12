@@ -25,6 +25,17 @@ def execute_query(query, args=()):
     cur.close()
     return rows
 
+def generate_unique_review_id():
+    while True:
+        review_id = str(random.randint(1000, 999999999))
+        # Check MySQL to see if review_id already exists 
+        result = execute_query(
+            "SELECT COUNT(*) FROM Reviews WHERE review_id = %s",
+            (review_id,)
+        )
+        if result[0][0] == 0:
+            return review_id  # ✅ It's unique, return it!
+
 def print_user(user_dict):
     # print out the values of the user dictionary
     print("Username: ", user_dict["Username"])
@@ -123,6 +134,22 @@ def update_password(table):
         print("Your password has been updated.")
     except Exception:
         print("Error in updating password.\n")
+
+def update_password2(table, username, new_password):
+    """
+    Update the user's password in DynamoDB.
+    """
+    try:
+        table.update_item(
+            Key={"Username": username},
+            UpdateExpression="SET Password = :p",
+            ExpressionAttributeValues={':p': new_password}
+        )
+        return True  # ✅ Success
+    except Exception as e:
+        print("Error updating password:", str(e))
+        return False  # ❌ Failure
+
 
 def delete_user(table):
     """
@@ -240,3 +267,25 @@ def display_price(rows):
 
     html += "</table>"
     return html
+
+
+
+def display_reviews(rows):
+    html = ""
+    html += """<table border="1">
+    <tr>
+        <th>Review ID</th>
+        <th>Review Date</th>
+        <th>Host Name</th>
+        <th>Name of Listing</th>
+        <th>Neighborhood</th>
+        <th>Review</th>
+    </tr>"""
+
+    for r in rows:
+        html += f"<tr><td>{r[0]}</td><td>{r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td><td>{r[5]}</td></tr>"
+
+    html += "</table>"
+    return html
+
+

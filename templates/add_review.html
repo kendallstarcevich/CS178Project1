@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Review</title>
+</head>
+<body>
+    <h2>Add a Review</h2>
+    <form action="{{ url_for('add_review') }}" method="post">
+        <label for="comments">Comments:</label><br>
+        <input type="text" name="comments" required><br><br>
+
+        <label for="listing_id">Listing ID:</label><br>
+        <input type="number" name="listing_id" required><br><br>
+
+        <input type="submit" value="Submit Review">
+    </form>
+</body>
+</html>
