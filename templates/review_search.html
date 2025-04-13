@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Search Reviews{% endblock %}
+
+{% block content %}
+<h2>Search Reviews by Listing ID</h2>
+<form method="post">
+    <input type="text" name="listing_id" placeholder="Enter Listing ID" required>
+    <button type="submit">Search</button>
+</form>
+
+{% if listings %}
+    <ul>
+        {% for review in listings %}
+            <li>
+                <strong>{{ review[1] }}</strong> ({{ review[0] }})<br>
+                {{ review[2] }}
+            </li>
+        {% endfor %}
+    </ul>
+{% elif listing_id %}
+    <p>No reviews found for listing ID {{ listing_id }}</p>
+{% endif %}
+{% endblock %}

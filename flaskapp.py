@@ -38,7 +38,7 @@ def login_post():
     if user:
         session['username'] = username
         session['reviewer_id'] = user['ID']
-        return render_template('review.html')
+        return redirect(url_for('account'))
     else:
         return render_template('login.html', error="❌ Invalid username or password.")
 
@@ -71,22 +71,38 @@ def change_password_post():
         flash("❌ Error updating password.")
     return redirect(url_for('account'))
 
+
+@app.route('/confirm_delete', methods=['GET'])
+def delete_user_confirm():
+    username = session.get('username')
+    if not username:
+        flash("You must be logged in to delete your account.", "danger")
+        return redirect(url_for('login'))
+    return render_template('confirm_delete.html', username=username)
+
+@app.route('/confirm_delete', methods=['POST'])
+def delete_user_post():
+    username = session.get('username')
+    if not username:
+        flash("No user found in session.", "danger")
+        return redirect(url_for('login'))
+
+    try:
+        table.delete_item(
+            Key={'Username': username}
+        )
+        session.clear()  # Log the user out
+        flash("✅ Your account has been successfully deleted.", "success")
+        return redirect(url_for('login'))
+    except Exception as e:
+        print("Error deleting user:", e)
+        flash("❌ There was a problem deleting your account.", "danger")
+        return redirect(url_for('account'))
+
 @app.route('/about')
 def about():
     return '<h2>An about page!</h2>'
 
-@app.route('/hello/<username>/')
-def hello_user(username):
-    return render_template('layout.html', name=username)
-
-@app.route("/viewdb")
-def viewdb():
-    rows = execute_query("""SELECT l.id, l.name, l.price, r.review_date, r.comments
-        FROM Listings l
-        JOIN Reviews r ON l.id = r.listing_id
-        LIMIT 10
-""")
-    return display_html(rows)
 
 @app.route("/reviews/<reviewer_id>")
 def view_reviews(reviewer_id):
@@ -96,6 +112,24 @@ where r.reviewer_id = %s
 order by r.review_date desc
 limit 10""", (reviewer_id))
     return display_reviews(rows)
+
+@app.route("/my_reviews")
+def my_reviews():
+    if 'reviewer_id' not in session:
+        return redirect(url_for('login'))  # safety check
+    reviewer_id = session['reviewer_id']
+
+    rows = execute_query("""
+        SELECT r.review_id, r.review_date, l.host_name, l.name, l.neighbourhood, r.comments
+        FROM Listings l
+        JOIN Reviews r ON l.id = r.listing_id
+        WHERE r.reviewer_id = %s
+        ORDER BY r.review_date DESC
+        LIMIT 10
+    """, (reviewer_id,))
+
+    return render_template("my_reviews.html", reviews=rows, reviewer_id=reviewer_id)
+
 
 @app.route('/review')
 def review_page():
@@ -152,6 +186,64 @@ def add_review():
             return redirect(url_for('add_review'))
 
     return render_template('add_review.html')
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        selected_room_type = request.form['room_type']
+        selected_neighbourhood = request.form['neighbourhood']
+
+        listings = execute_query(
+            """
+            SELECT c.listing_id, c.price, l.room_type, l.neighbourhood, l.name
+            FROM Listings l
+            JOIN Calendar c ON l.id = c.listing_id
+            WHERE l.room_type = %s AND l.neighbourhood = %s
+            GROUP BY c.listing_id
+            ORDER BY c.price ASC
+            LIMIT 100;
+            """,
+            (selected_room_type, selected_neighbourhood)
+        )
+
+        return render_template(
+            'search.html',
+            listings=listings,
+            selected_room_type=selected_room_type,
+            selected_neighbourhood=selected_neighbourhood
+        )
+
+    # GET request: load distinct room types and neighborhoods for dropdowns
+    room_types = [row[0] for row in execute_query("SELECT DISTINCT room_type FROM Listings;")]
+    neighbourhoods = [row[0] for row in execute_query("SELECT DISTINCT neighbourhood FROM Listings;")]
+
+    return render_template('search.html', room_types=room_types, neighbourhoods=neighbourhoods)
+
+@app.route('/review_search', methods=['GET', 'POST'])
+def review_search():
+    listings = []
+    if request.method == 'POST':
+
+        listing_id = request.form['listing_id']
+        listings = execute_query(
+            """
+           select review_date, reviewer_name, comments
+            from Reviews
+            where listing_id = %s
+            order by review_date desc
+            limit 100
+            """,
+            (listing_id,)
+        )
+
+        return render_template(
+            'review_search.html',
+            listings=listings,
+            listing_id=listing_id
+        )
+
+    return render_template('review_search.html', listings = listings)
+
 
 
 @app.route("/pricequerytextbox", methods = ['GET'])
