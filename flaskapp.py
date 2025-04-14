@@ -18,6 +18,36 @@ def account():
     reviewer_id = session['reviewer_id']
     return render_template('account.html', username=username, reviewer_id=reviewer_id)
 
+@app.route('/delete-review', methods=['GET', 'POST'])
+def delete_review():
+    if 'reviewer_id' not in session:
+        return redirect(url_for('login'))
+
+    reviewer_id = session['reviewer_id']
+
+    if request.method == 'POST':
+        review_id = request.form['review_id']
+        confirm = request.form.get('confirm')
+
+        if confirm == 'yes':
+
+            conn = get_conn()  # manually get the connection
+            cur = conn.cursor()
+
+            cur.execute("DELETE FROM Reviews WHERE review_id = %s", (review_id,))
+            conn.commit()  # ✅ explicitly commit
+            cur.close()
+            conn.close()
+
+            flash("✅ Review deleted successfully!", "success")
+            return redirect(url_for('my_reviews'))
+
+    reviews = execute_query(
+        "SELECT review_id, comments FROM Reviews WHERE reviewer_id = %s ORDER BY review_date DESC",
+        (reviewer_id,)
+    )
+    return render_template('delete_review.html', reviews=reviews)
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -178,7 +208,7 @@ def add_review():
             conn.close()
 
             flash("✅ Review submitted successfully!", "success")
-            return redirect(url_for('account'))
+            return redirect(url_for('my_reviews'))
 
         except Exception as e:
             print("Error inserting review:", e)
