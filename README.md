@@ -25,7 +25,7 @@ My project is a Flask-based web application that allows users to view, search, a
 3. ### **Install dependencies:** 
 ```pip install -r requirements.txt```
 4. ### **Set up environment:** 
-Make sure that the creds.py file contains the MySQL and DynamoDB credentials. Example structure for creds.py: 
+Make sure that the creds.py file contains the MySQL credentials. Example structure for creds.py: 
 ```
 python host = "your-rds-hostname"
 user = "your-username"
