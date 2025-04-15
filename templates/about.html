@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}About This Project{% endblock %}
+
+{% block content %}
+<style>
+    .about-container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 40px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+    }
+
+    .about-container h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .about-container p {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .about-container ul {
+        margin-left: 20px;
+        color: #444;
+    }
+
+    .about-container ul li {
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="about-container">
+    <h2>About This Project</h2>
+    <p>
+        This web application allows users to explore and manage Seattle-based Airbnb listings and reviews. It was built using Flask and integrates two types of databases: 
+        a MySQL database hosted on AWS RDS for storing listings and reviews, and AWS DynamoDB for user account information.
+    </p>
+
+    <p>
+        The platform is designed for smooth navigation and user interaction. Once logged in, users can view listings based on filters like room type and neighborhood, write and manage reviews, and update or delete their account.
+    </p>
+
+    <p><strong>Main Features:</strong></p>
+    <ul>
+        <li>Filter listings by room type and neighborhood</li>
+        <li>Submit, view, and delete your own reviews</li>
+        <li>Manage account information (change password, delete account)</li>
+        <li>Data is pulled dynamically from MySQL and DynamoDB</li>
+    </ul>
+
+</div>
+{% endblock %}

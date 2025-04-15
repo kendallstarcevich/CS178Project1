@@ -31,6 +31,7 @@ def delete_review():
 
         if confirm == 'yes':
 
+            #CHATGPT HELPED WITH MANUALLY GETTING THE CONNECTION (I could not figure out how to actually change the table)
             conn = get_conn()  # manually get the connection
             cur = conn.cursor()
 
@@ -50,8 +51,9 @@ def delete_review():
 
 @app.route('/logout')
 def logout():
+    # clears the session data so that you can log in with a different user
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('home'))
 
 
 @app.route('/login', methods = ['GET'])
@@ -104,6 +106,7 @@ def change_password_post():
 
 @app.route('/confirm_delete', methods=['GET'])
 def delete_user_confirm():
+    #I wanted to make a confirmation page before deleting the user so that they don't accidentally delete their account
     username = session.get('username')
     if not username:
         flash("You must be logged in to delete your account.", "danger")
@@ -121,7 +124,7 @@ def delete_user_post():
         table.delete_item(
             Key={'Username': username}
         )
-        session.clear()  # Log the user out
+        session.clear() 
         flash("✅ Your account has been successfully deleted.", "success")
         return redirect(url_for('login'))
     except Exception as e:
@@ -131,7 +134,7 @@ def delete_user_post():
 
 @app.route('/about')
 def about():
-    return '<h2>An about page!</h2>'
+    return render_template('about.html')
 
 
 @app.route("/reviews/<reviewer_id>")
@@ -195,6 +198,7 @@ def add_review():
             reviewer_id = session.get('reviewer_id')
             listing_id = request.form['listing_id']
 
+            #CHATGPT HELPED WITH MANUALLY GETTING THE CONNECTION (I could not figure out how to actually change the table)
             conn = get_conn()  # manually get the connection
             cur = conn.cursor()
 
