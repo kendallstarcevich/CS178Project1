@@ -20,10 +20,10 @@ My project is a Flask-based web application that allows users to view, search, a
 
 # Setup and run instructions
 
-1. **Fork my repository**
-2. **Set up RDS Database and EC2 Instance with the correct permissions**
-3. **Install dependencies:** ```pip install -r requirements.txt```
-4. **Set up environment:** Make sure that the creds.py file contains the MySQL and DynamoDB credentials. Example structure for creds.py: 
+1. ### **Fork my repository**
+2. ### **Set up RDS Database and EC2 Instance with the correct permissions**
+3. ### **Install dependencies:** ```pip install -r requirements.txt```
+4. ### **Set up environment:** Make sure that the creds.py file contains the MySQL and DynamoDB credentials. Example structure for creds.py: 
 ```
 python host = "your-rds-hostname"
 user = "your-username"
@@ -51,4 +51,4 @@ IGNORE 1 ROWS;
 ```
 *Repeat for Calendar and Reviews*
 
-6. **Run the Flask app:** in the terminal in your working directory on your machine, run: ```python3 flaskapp.py``` and navigate to http://localhost:8080 in your browser or run the same thing in your EC2 instance and navigate to http://EC2host:8080/
+6. ### **Run the Flask app:** in the terminal in your working directory on your machine, run: ```python3 flaskapp.py``` and navigate to http://localhost:8080 in your browser or run the same thing in your EC2 instance and navigate to http://EC2host:8080/
