@@ -42,17 +42,20 @@ Navigate to MySQL shell by reconnecting to EC2 instance. Then run ```mysql -h yo
 
 To populate the tables, use
 ```mysql -h your_rds_endpoint -u admin -p --local-infile```
-and run: 
+and run:
 
 ```
 LOAD DATA LOCAL INFILE '/pathtocsv/listings.csv
 INTO TABLE Listings
-FIELDS TERMINATED BY ',' 
+FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 ```
 *Repeat for Calendar and Reviews*
+
+###### DynamoDB:
+In AWS or using Boto3, manually create a Users table with Username as the primary key. Attributes are password and id. 
 
 6. ### **Run the Flask app:** 
 in the terminal in your working directory on your machine, run: ```python3 flaskapp.py``` and navigate to http://localhost:8080 in your browser or run the same thing in your EC2 instance and navigate to http://EC2host:8080/
