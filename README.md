@@ -1,4 +1,7 @@
 # Project summary
+
+This is my CS178 - Cloud and Database Systems Project #1: 
+
 My project is a Flask-based web application that allows users to view, search, and manage Airbnb listings and reviews from Seattle. The app connects to a MySQL database for listings and reviews and AWS DynamoDB for user data. It can be ran on your local machine or cloned onto an AWS EC2 instance. Mine is currently persistent on my EC2 instance at: [Live Application](http://34.238.151.33:8080/)
 
 **Users can:**
