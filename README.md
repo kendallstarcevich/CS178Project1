@@ -32,7 +32,7 @@ My project is a Flask-based web application that allows users to view, search, a
 
 Make sure that the creds.py file contains the MySQL credentials. Example structure for creds.py: 
 ```
-python host = "your-rds-hostname"
+host = "your-rds-hostname"
 user = "your-username"
 password = "your-password"
 db = "your-db-name"
