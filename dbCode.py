@@ -26,6 +26,10 @@ def execute_query(query, args=()):
     return rows
 
 def generate_unique_review_id():
+    '''
+    Generate a unique review_id for a review. I wanted this to be a random number so it blends in with the other data, 
+    but made sure that it doesn't already exist.
+    '''
     while True:
         review_id = str(random.randint(1000, 999999999))
         # Check MySQL to see if review_id already exists 
@@ -34,7 +38,7 @@ def generate_unique_review_id():
             (review_id,)
         )
         if result[0][0] == 0:
-            return review_id  # ✅ It's unique, return it!
+            return review_id 
 
 def print_user(user_dict):
     # print out the values of the user dictionary
@@ -50,6 +54,10 @@ def print_all_users():
         print_user(user)
 
 def generate_unique_reviewer_id():
+    '''
+    Generate a unique reviewer_id for a review. I wanted this to be a random number so it blends in with the other data, 
+    but made sure that it doesn't already exist in either the MySQL or DynamoDB database.
+    '''
     while True:
         reviewer_id = str(random.randint(10000, 999999999))  # 5-9 digit number
         # Check MySQL to see if reviewer_id already exists 
@@ -88,7 +96,7 @@ def create_user(table):
 
 def create_user2(table, name, username, password):
     """
-    Accept form inputs to create a user from Flask
+    same as function above, but modified to work in Flask instead of the command line
     """
     reviewer_id = generate_unique_reviewer_id()
     table.put_item(
@@ -137,7 +145,7 @@ def update_password(table):
 
 def update_password2(table, username, new_password):
     """
-    Update the user's password in DynamoDB.
+    Same as update_password, but modified to work in Flask instead of the command line
     """
     try:
         table.update_item(
@@ -228,7 +236,7 @@ def main():
         else:
             print('Not a valid option. Try again.')
 
-#UNCOMMENT THIS IF YOU WANT TO SEE CRUD MENU
+#UNCOMMENT THIS IF YOU WANT TO SEE CRUD MENU, CONTROLLABLE IN THE TERMINAL
 #main()
 
 
@@ -251,6 +259,9 @@ def display_html(rows):
 
 
 def display_price(rows):
+    '''
+    Used to display the price of a listing in the HTML table
+    '''
     html = ""
     html += """<table border="1">
     <tr>
@@ -271,6 +282,9 @@ def display_price(rows):
 
 
 def display_reviews(rows):
+    '''
+    Used to display the reviews in the HTML table when you choose a listing based on ID
+    '''
     html = ""
     html += """<table border="1">
     <tr>

@@ -1,3 +1,4 @@
+--DISCLAIMER, CHATGPT GENERATED THIS WITH MY DIRECTION:)
 -- Create the database
 CREATE DATABASE IF NOT EXISTS AirbnbSeattle;
 USE AirbnbSeattle;

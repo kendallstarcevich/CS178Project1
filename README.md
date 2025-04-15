@@ -57,8 +57,10 @@ IGNORE 1 ROWS;
 ```
 *Repeat for Calendar and Reviews*
 
+Access it using ```Use AirbnbSeattle;``` in the MySql shell.
+
 ###### DynamoDB:
-In AWS or using Boto3, manually create a Users table with Username as the primary key. Attributes are password and id. 
+In AWS or using Boto3, manually create a Users table with Username as the primary key. Attributes are name, password and id (randomly generated if signing up using app). 
 
 6. ### **Run the Flask app:** 
 in the terminal in your working directory on your machine, run: ```python3 flaskapp.py``` and navigate to http://localhost:8080 in your browser or run the same thing in your EC2 instance and navigate to http://EC2host:8080/

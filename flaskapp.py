@@ -274,19 +274,6 @@ def review_search():
 
     return render_template('review_search.html', listings = listings)
 
-
-
-@app.route("/pricequerytextbox", methods = ['GET'])
-def price_form():
-  return render_template('textbox.html', fieldname = "Price")
-
-
-@app.route("/pricequerytextbox", methods = ['POST'])
-def price_form_post():
-  text = request.form['text']
-  return viewprices(text)
-
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
 
