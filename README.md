@@ -35,14 +35,10 @@ db = "your-db-name"
 * *I cleaned out the calendar csv in the cleaning.py file to remove the $ in the price column and drop the adjusted_price columnn because it was empty*
 
 ### MySQL: 
+Navigate to MySQL shell by reconnecting to EC2 instance. Then run ```mysql -h your_rds_endpoint -u admin -p < airbnb.sql``` to create the database.
 
-Run ```mysql -h your_rds_endpoint -u admin -p < airbnb.sql``` 
-
-to create the database.
 To populate the tables, use
-
 ```mysql -h your_rds_endpoint -u admin -p --local-infile```
-
 and run: 
 
 ```
