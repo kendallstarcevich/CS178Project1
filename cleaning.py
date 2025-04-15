@@ -1,3 +1,5 @@
+#DISCLAIMER: CHATGPT GENERATED THIS CODE
+
 import pandas as pd
 
 # Load the original calendar CSV

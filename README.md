@@ -27,7 +27,9 @@ My project is a Flask-based web application that allows users to view, search, a
 2. ### **Set up RDS Database and EC2 Instance in AWS with the correct permissions**
 3. ### **Install dependencies:** 
 ```pip install -r requirements.txt```
+
 4. ### **Set up environment:** 
+
 Make sure that the creds.py file contains the MySQL credentials. Example structure for creds.py: 
 ```
 python host = "your-rds-hostname"
