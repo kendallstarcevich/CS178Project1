@@ -153,10 +153,10 @@ def update_password2(table, username, new_password):
             UpdateExpression="SET Password = :p",
             ExpressionAttributeValues={':p': new_password}
         )
-        return True  # ✅ Success
+        return True 
     except Exception as e:
         print("Error updating password:", str(e))
-        return False  # ❌ Failure
+        return False
 
 
 def delete_user(table):
@@ -256,30 +256,6 @@ def display_html(rows):
 
     html += "</table>"
     return html
-
-
-def display_price(rows):
-    '''
-    Used to display the price of a listing in the HTML table
-    '''
-    html = ""
-    html += """<table border="1">
-    <tr>
-        <th>Listing ID</th>
-        <th>Price</th>
-        <th>Neighborhood</th>
-        <th>Room Type</th>
-        <th>Minimum Nights</th>
-        <th>Maximum Nights</th>
-    </tr>"""
-
-    for r in rows:
-        html += f"<tr><td>{r[0]}</td><td>${r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td><td>{r[5]}</td></tr>"
-
-    html += "</table>"
-    return html
-
-
 
 def display_reviews(rows):
     '''

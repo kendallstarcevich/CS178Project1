@@ -12,6 +12,7 @@ def home():
 
 @app.route('/account')
 def account():
+    """Display the account page with user information."""
     if 'username' not in session:
         return redirect(url_for('login'))
     username = session['username']
@@ -20,6 +21,7 @@ def account():
 
 @app.route('/delete-review', methods=['GET', 'POST'])
 def delete_review():
+    """Delete a review from the database."""
     if 'reviewer_id' not in session:
         return redirect(url_for('login'))
 
@@ -51,7 +53,7 @@ def delete_review():
 
 @app.route('/logout')
 def logout():
-    # clears the session data so that you can log in with a different user
+    """clears the session data so that you can log in with a different user"""
     session.clear()
     return redirect(url_for('home'))
 
@@ -81,6 +83,7 @@ def signup():
 
 @app.route('/signup', methods=['POST'])
 def signup_post():
+    """Creates an entry in the Users table"""
     name = request.form['name']
     username = request.form['username']
     password = request.form['password']
@@ -134,11 +137,12 @@ def delete_user_post():
 
 @app.route('/about')
 def about():
+    """Display the about page - it talks about the project"""
     return render_template('about.html')
-
 
 @app.route("/reviews/<reviewer_id>")
 def view_reviews(reviewer_id):
+    """Display the reviews for a specific reviewer."""
     rows = execute_query("""select r.review_id, r.review_date, l.host_name, l.name, l.neighbourhood, r.comments
 from Listings l join Reviews r on l.id = r.listing_id
 where r.reviewer_id = %s
@@ -148,6 +152,7 @@ limit 10""", (reviewer_id))
 
 @app.route("/my_reviews")
 def my_reviews():
+    """Display the reviews for the logged-in user."""
     if 'reviewer_id' not in session:
         return redirect(url_for('login'))  # safety check
     reviewer_id = session['reviewer_id']
@@ -166,26 +171,9 @@ def my_reviews():
 
 @app.route('/review')
 def review_page():
+    """Display the review page. This is where the user can add or view reviews"""
     reviewer_id = session.get('reviewer_id')          
     return render_template('review.html', reviewer_id=reviewer_id)
-
-@app.route("/pricequery/<price>")
-def viewprices(price):
-    rows = execute_query("""
-        SELECT 
-    c.listing_id,
-    c.price,
-    l.neighbourhood,
-    l.room_type,
-    c.minimum_nights,
-    c.maximum_nights
-FROM Listings l
-JOIN Calendar c ON l.id = c.listing_id
-WHERE c.price = %s
-GROUP BY c.listing_id, l.neighbourhood, l.room_type
-LIMIT 10
-    """, (price,))
-    return display_price(rows)
 
 
 @app.route('/add-review', methods=['GET', 'POST'])
@@ -199,14 +187,14 @@ def add_review():
             listing_id = request.form['listing_id']
 
             #CHATGPT HELPED WITH MANUALLY GETTING THE CONNECTION (I could not figure out how to actually change the table)
-            conn = get_conn()  # manually get the connection
+            conn = get_conn()  
             cur = conn.cursor()
 
             cur.execute(
                 "INSERT INTO Reviews (review_id, review_date, comments, reviewer_id, listing_id) VALUES (%s, %s, %s, %s, %s)",
                 (review_id, review_date, comments, reviewer_id, listing_id)
             )
-            conn.commit()  # ✅ explicitly commit
+            conn.commit() 
 
             cur.close()
             conn.close()
@@ -223,6 +211,7 @@ def add_review():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
+    """Display the search page and handle search queries."""
     if request.method == 'POST':
         selected_room_type = request.form['room_type']
         selected_neighbourhood = request.form['neighbourhood']
@@ -247,7 +236,7 @@ def search():
             selected_neighbourhood=selected_neighbourhood
         )
 
-    # GET request: load distinct room types and neighborhoods for dropdowns
+    #Chat GPT helped me get the dropdowns to work
     room_types = [row[0] for row in execute_query("SELECT DISTINCT room_type FROM Listings;")]
     neighbourhoods = [row[0] for row in execute_query("SELECT DISTINCT neighbourhood FROM Listings;")]
 
@@ -255,6 +244,7 @@ def search():
 
 @app.route('/review_search', methods=['GET', 'POST'])
 def review_search():
+    """Display the review search page and handle search queries."""
     listings = []
     if request.method == 'POST':
 
